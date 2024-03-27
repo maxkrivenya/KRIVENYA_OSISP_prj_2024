@@ -6,6 +6,11 @@ int main(int argc, char* argv[], char* envp[]){
         exit(-1);
     }
     int flag = 0;
+    FILE* fptr2 = fopen("time_save2.txt","a");
+    if(fptr2==NULL){
+        perror("file open error\n");
+        exit(-1);
+    }
     //printf("hrun_controller is running\n");
     switch(argv[0][0]){
         case 'l':{
@@ -42,12 +47,21 @@ int main(int argc, char* argv[], char* envp[]){
                      exit(-1);
                      break;
                  }
+        case 'w':{
+                     time_t rawtime;
+                     struct tm * timeinfo;
+                     time ( &rawtime );
+                     timeinfo = localtime ( &rawtime );
+                     fprintf (fptr2, "Current local time and date: %s", asctime (timeinfo));
+                     break;
+                 }
         default:{
                     printf("idk\n");
                     break;
                 }
     }
     //printf("hrun_controller exit\n");
-    exit(-1);
+    fclose(fptr2);
+    exit(1);
     return 0;
 }
