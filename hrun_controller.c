@@ -47,7 +47,7 @@ int main(int argc, char* argv[], char* envp[]){
                     break;
                 }
     }
-    printf("hrun_controller exit\n");
+    //printf("hrun_controller exit\n");
     exit(-1);
     return 0;
 }

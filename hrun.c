@@ -1,6 +1,6 @@
 #include "hrun.h"
 int main(int argc, char* argv[], char* envp[]){
-    (void)printf("hrun is running\n");
+    //(void)printf("hrun is running\n");
 
     char opt = getopt(argc,argv, OPT_MASK);
 	if(opt != -1){
@@ -20,7 +20,7 @@ int main(int argc, char* argv[], char* envp[]){
 
     printf("\tseconds since epoch began %jd\n",(intmax_t)(entstat.st_mtime));
     printf("\t.config last access: %s\n",asctime(gmtime(&entstat.st_mtime)));
-    printf("hrun exit\n");
+    //printf("hrun exit\n");
     exit(1);
     return 0;
 }
