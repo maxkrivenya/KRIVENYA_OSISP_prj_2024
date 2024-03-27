@@ -37,7 +37,7 @@ int main(int argc, char* argv[], char* envp[]){
         case 'e':{
                      argv[1] = CONFIG_PATH;
                      argv[2] = NULL;
-                     (void)execve("/usr/bin/vim",argv,envp);
+                     (void)execve(getenv("EDITOR"),argv,envp);
                      (void)printf("execve failed!\n");
                      exit(-1);
                      break;
