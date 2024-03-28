@@ -8,6 +8,7 @@ hrun - the best task scheduler
   optpars: 
     -l (list current tasks)
     -e (edit .config with your default system editor)
+
 ======================================CONFIG===================================
 
   .config - file with jobs
