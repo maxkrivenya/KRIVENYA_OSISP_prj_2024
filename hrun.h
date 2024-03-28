@@ -8,9 +8,11 @@
 #include <unistd.h>
 #include <time.h>
 #include <ctype.h>
+#include <errno.h>
 
 #define CONFIG_PATH "./.config"
 #define CONTROLLER_PATH "./hrun_controller"
+#define HRUN_CHILD "./hrunik"
 #define OPT_MASK "lew"
 #define MAX_LINE_LENGTH 80
 

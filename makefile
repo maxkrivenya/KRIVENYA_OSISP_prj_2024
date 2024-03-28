@@ -7,5 +7,9 @@ hrun: hrun.c makefile
 		$(CC) $(CFLAGS) hrun.c -o hrun
 hrun_controller: hrun_controller.c makefile
 		$(CC) $(CFLAGS) hrun_controller.c -o hrun_controller
-hrun_config_checker: hrun_config_checker.c makefile
-		$(CC) $(CFLAGS) hrun_config_checker.c -o hrun_config_checker
+hrun_parent: hrun_parent.c makefile
+		$(CC) $(CFLAGS) hrun_parent.c -o hrun_parent
+hrunik: hrunik.c makefile
+		$(CC) $(CFLAGS) hrunik.c -o hrunik
+		
+
