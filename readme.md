@@ -6,6 +6,7 @@ hrun - the best task scheduler
   2. ./hrun
      
   optpars: 
+  
     -l (list current tasks)
     
     -e (edit .config with your default system editor)
