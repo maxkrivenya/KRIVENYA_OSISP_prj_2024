@@ -7,14 +7,19 @@ hrun - the best task scheduler
      
   optpars: 
     -l (list current tasks)
+    
     -e (edit .config with your default system editor)
+    
 
 ======================================CONFIG===================================
 
   .config - file with jobs
     format: dd hh mm ss task_that_hrun_needs_to_do
+    
       -example: ** ** *5 1* ~/script.sh
+      
         ~/script.sh is executed when current time is *5 minutes (15,25,...) and 1* seconds (11,12,...)
+        
       -can use any non-digit placeholder instead of *
 
 ======================================ROLES====================================
