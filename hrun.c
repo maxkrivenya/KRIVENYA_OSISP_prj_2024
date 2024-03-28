@@ -62,7 +62,7 @@ int main(int argc, char* argv[], char* envp[]){
         }
         current_time[i]='\0';
         
-        if(current_time[7]=='9'){                   //REMOVE BEFORE SHIPPING
+        if(current_time[7]=='7'){                   //REMOVE BEFORE SHIPPING
             free(data);
             exit(1);
         }
