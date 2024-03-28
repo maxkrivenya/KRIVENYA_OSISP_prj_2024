@@ -51,20 +51,16 @@ int main(int argc, char* argv[], char* envp[]){
             current_time[i] = current_time[i + 8];
         }
         current_time[i]='\0';
-        //printf("%s\n",current_time);
         if(current_time[4]=='3'){
             fclose(fptr);
+            fclose(fptr2);
             free(data);
             free(task);
             free(current_time);
             free(plan_time);
             exit(1);
         }
-        //printf("%s\n%s\n\n",plan_time,current_time);
         if(time_to_proc(plan_time, current_time)){
-          //  fprintf(fptr2, "%s\n",current_time);
-          //  fputs(data,fptr2);
-          //  fputs(task,fptr2);
             system(task);
         }
         struct timespec nan = {1,0};

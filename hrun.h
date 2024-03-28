@@ -17,8 +17,6 @@
 //dd hh mm ss task 
 //01 34 67 9  12->
 int time_to_proc(char* plan, char* now){
-    puts(plan);
-    puts(now);
     if(plan==NULL){return -1;}
     if(now==NULL){return -1;}
     for(int i = 0; i < 12; i++){
