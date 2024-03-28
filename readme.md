@@ -31,3 +31,8 @@ hrun - the best task scheduler
   
   hrun_config_checker - checks if .config has been modified since start;
     -if changed, restarts hrun. (WIP)
+
+
+================================================================================
+
+на данный момент выполняет первую задачу в .config и обрабатывает указанные getopts
