@@ -6,7 +6,6 @@ int main(){
     struct stat entstat;	
     int flag;    
 
-
     flag=lstat(CONFIG_PATH,&entstat);			//get entry type
     if(flag==-1){
         (void)perror("lstat failed\n");
@@ -23,9 +22,9 @@ int main(){
             //kill();
             last_change_date = entstat.st_mtime;
         }
-        char* mf = asctime(gmtime(&entstat.st_mtime));
-
-
+        struct timespec nan1 = {1, 0};
+        struct timespec nan2 = {1, 0};
+        nanosleep(&nan1,&nan2);
 
     }
 

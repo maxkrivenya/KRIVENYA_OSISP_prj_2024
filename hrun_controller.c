@@ -25,7 +25,8 @@ int main(int argc, char* argv[], char* envp[]){
                          (void)fgets(str,MAX_LINE_LENGTH , fptr);
                          if(str==NULL){
                              (void)printf("fgets error. exiting\n");
-                             (void)exit(0);
+                             free(str);
+                             exit(0);
                          }
                          if(!feof(fptr)){
                              (void)printf("^| %s", str);
