@@ -35,8 +35,7 @@ int main(int argc, char* argv[], char* envp[]){
         }
         current_time[i]='\0';
         
-        if(current_time[7]=='7'){                   //REMOVE BEFORE SHIPPING
-            free(argv[1]);
+        if(current_time[7]=='0'){                   //REMOVE BEFORE SHIPPING
             exit(1);
         }
 

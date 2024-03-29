@@ -1,5 +1,4 @@
 #include "hrun.h"
-#define PARENT_PATH "./hrun_parent"
 int main(int argc, char* argv[], char* envp[]){
     //(void)printf("hrun is running\n");
 
@@ -11,7 +10,8 @@ int main(int argc, char* argv[], char* envp[]){
         exit(-1);
     }
 
+    argv[0] = PARENT_PATH;
     execve(PARENT_PATH, argv, envp);
-    perror("execve error\n");
+    (void)printf("execve error:%s\n", strerror(errno));
     exit(-1);
 }

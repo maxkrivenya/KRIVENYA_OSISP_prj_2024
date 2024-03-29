@@ -1,6 +1,4 @@
 #include "hrun.h"
-#include <stdlib.h>
-#include <time.h>
 
 int main(int argc, char* argv[], char* envp[]){
     time_t last_change_date;
@@ -29,6 +27,19 @@ int main(int argc, char* argv[], char* envp[]){
            exit(-1);
        }
 
+       FILE* fpids = fopen(".pids","w");
+       if(fpids==NULL){
+           perror("file open error\n");
+           exit(-1);
+       }
+       
+       FILE* fstat = fopen(".stat","w");
+       if(fstat==NULL){
+           perror("file open error\n");
+           exit(-1);
+       }
+
+       fputs(LINE_SEPARATOR, fstat); 
        while(!feof(fptr)){
 
            (void)fgets(str,MAX_LINE_LENGTH , fptr);
@@ -50,8 +61,8 @@ int main(int argc, char* argv[], char* envp[]){
                            }
 
                    case 0:{                            //for forked
-                                                       //name[CHILD_NAME_SIZE-2] = '0' + counter;
-                                                       //argv[0] = name;
+                              //name[CHILD_NAME_SIZE-2] = '0' + counter;
+                              //argv[0] = name;
                               argv[1] = str;
                               flag = execve(HRUN_CHILD, argv, envp);
                               if(flag == -1){
@@ -61,12 +72,10 @@ int main(int argc, char* argv[], char* envp[]){
                               exit(1);
                               break;
                           }
-                   default:{   /*
+                   default:{   
                                //for parent
-                               printf("created C%d-%d\n",counter,pid);
-                               child[counter] = pid;
-                               break;
-                               */
+                               fprintf(fstat,"created hrunik | %d\n",pid);
+                               fprintf(fpids,"%d\n",pid);
                                break;
                            }    
 
@@ -74,8 +83,24 @@ int main(int argc, char* argv[], char* envp[]){
 
            } //feof fptr
        } //feof fptr #2
+         //
+       flag = fclose(fstat);
+       if(flag==EOF){
+           (void)printf("file close error.\n");
+           exit(-1);
+       }
 
-       fclose(fptr);
+       flag = fclose(fpids);
+       if(flag==EOF){
+           (void)printf("file close error.\n");
+           exit(-1);
+       }
+
+       flag = fclose(fptr);
+       if(flag==EOF){
+           (void)printf("file close error.\n");
+           exit(-1);
+       }
 
        while(1){
            flag=lstat(CONFIG_PATH,&entstat);			//get entry type
@@ -84,8 +109,6 @@ int main(int argc, char* argv[], char* envp[]){
                exit(-1);
            }
            if(last_change_date != entstat.st_mtime){
-               //kill();
-               last_change_date = entstat.st_mtime;
                break;
            }
            struct timespec nan1 = {1, 0};
@@ -94,6 +117,21 @@ int main(int argc, char* argv[], char* envp[]){
 
        } //while 1
 
+       last_change_date = entstat.st_mtime;
+
+       fpids = fopen(".pids","r");      //kill children here 
+       if(fpids==NULL){
+           perror("file open error\n");
+           exit(-1);
+       }
+       while(!feof(fpids)){
+           (void)fgets(str,MAX_LINE_LENGTH , fpids);
+           if(!feof(fpids)){
+               printf("killing %s\n",str);
+               kill(atoi(str),SIGINT);
+           }
+       }
+       fclose(fpids);
     } // while 1
 
 

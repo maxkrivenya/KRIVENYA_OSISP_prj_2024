@@ -9,11 +9,15 @@
 #include <time.h>
 #include <ctype.h>
 #include <errno.h>
+#include <signal.h>
 
+#define PARENT_PATH "./hrun_parent"
 #define CONFIG_PATH "./.config"
 #define CONTROLLER_PATH "./hrun_controller"
 #define HRUN_CHILD "./hrunik"
 #define OPT_MASK "lew"
+#define LINE_SEPARATOR "\n=============================================\n"
+
 #define MAX_LINE_LENGTH 80
 
 //dd hh mm ss task 
