@@ -11,6 +11,7 @@
 #include <errno.h>
 #include <signal.h>
 
+int lstat(const char * file, struct stat * buf);
 int nanosleep(const struct timespec *requested_time, struct timespec *remaining);
 int kill(__pid_t pid, int sig);
 int getopt(int argc, char *const *argv, const char *shortopts);

@@ -61,7 +61,6 @@ int main(int argc, char* argv[], char* envp[]){
                     break;
                 }
     }
-    //printf("hrun_controller exit\n");
     fclose(fptr2);
     exit(1);
     return 0;

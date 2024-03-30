@@ -1,5 +1,4 @@
 #include "hrun.h"
-int lstat(const char *restrict file, struct stat *restrict buf);
 
 int main(int argc, char* argv[], char* envp[]){
 

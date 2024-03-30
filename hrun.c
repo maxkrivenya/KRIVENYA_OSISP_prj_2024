@@ -1,7 +1,5 @@
 #include "hrun.h"
 
-int lstat(const char *restrict file, struct stat *restrict buf);
-
 int main(int argc, char* argv[], char* envp[]){
 
     char opt = getopt(argc,argv, OPT_MASK);
