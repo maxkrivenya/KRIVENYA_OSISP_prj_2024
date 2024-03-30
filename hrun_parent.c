@@ -12,8 +12,8 @@ int main(int argc, char* argv[], char* envp[]){
     struct timespec nan1 = {1, 0};
     struct timespec nan2 = {1, 0};
     
-    int flag;    
-    pid_t pid       = 0;
+    int flag    = 0;    
+    pid_t pid   = 0;
 
     char* str = (char*)calloc(256, sizeof(char));
    
