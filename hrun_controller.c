@@ -11,7 +11,7 @@ int main(int argc, char* argv[], char* envp[]){
         perror("file open error\n");
         exit(-1);
     }
-    //printf("hrun_controller is running\n");
+
     switch(argv[0][0]){
         case 'l':{
                      char* str = (char*)calloc(MAX_LINE_LENGTH+1,sizeof(char));

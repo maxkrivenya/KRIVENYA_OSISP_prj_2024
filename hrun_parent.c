@@ -1,12 +1,23 @@
 #include "hrun.h"
+int lstat(const char *restrict file, struct stat *restrict buf);
 
 int main(int argc, char* argv[], char* envp[]){
+
+    if(argc < 1){return -1;}
+    
+    //.config change check
     time_t last_change_date;
     struct stat entstat;	
+    
+    //nanosleep
+    struct timespec nan1 = {1, 0};
+    struct timespec nan2 = {1, 0};
+    
     int flag;    
     pid_t pid       = 0;
 
     char* str = (char*)calloc(256, sizeof(char));
+   
     if(str==NULL){
         perror("calloc\n");
         exit(-1);
@@ -39,7 +50,7 @@ int main(int argc, char* argv[], char* envp[]){
            exit(-1);
        }
 
-       fputs(LINE_SEPARATOR, fstat); 
+       (void)fputs(LINE_SEPARATOR, fstat); 
        while(!feof(fptr)){
 
            (void)fgets(str,MAX_LINE_LENGTH , fptr);
@@ -83,7 +94,7 @@ int main(int argc, char* argv[], char* envp[]){
 
            } //feof fptr
        } //feof fptr #2
-         //
+
        flag = fclose(fstat);
        if(flag==EOF){
            (void)printf("file close error.\n");
@@ -111,9 +122,7 @@ int main(int argc, char* argv[], char* envp[]){
            if(last_change_date != entstat.st_mtime){
                break;
            }
-           struct timespec nan1 = {1, 0};
-           struct timespec nan2 = {1, 0};
-           nanosleep(&nan1,&nan2);
+           (void)nanosleep(&nan1,&nan2);
 
        } //while 1
 
@@ -131,9 +140,13 @@ int main(int argc, char* argv[], char* envp[]){
                kill(atoi(str),SIGINT);
            }
        }
-       fclose(fpids);
-    } // while 1
+       flag = fclose(fpids);
+       if(flag==EOF){
+           (void)printf("file close error.\n");
+           exit(-1);
+       }
 
+    } // while 1
 
     free(str);
     exit(1);

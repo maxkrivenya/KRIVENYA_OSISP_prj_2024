@@ -1,7 +1,7 @@
 #include "hrun.h"
 
 int main(int argc, char* argv[], char* envp[]){
-
+    if(argc<0 || envp[0]==NULL){return -1;}
     //char* data = (char*)calloc(256,sizeof(char));
     char* task = NULL;
     char* current_time = NULL;
@@ -35,7 +35,7 @@ int main(int argc, char* argv[], char* envp[]){
         }
         current_time[i]='\0';
         
-        if(current_time[7]=='0'){                   //REMOVE BEFORE SHIPPING
+        if(current_time[7]=='5'){                   //REMOVE BEFORE SHIPPING
             exit(1);
         }
 

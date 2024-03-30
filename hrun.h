@@ -11,6 +11,10 @@
 #include <errno.h>
 #include <signal.h>
 
+int nanosleep(const struct timespec *requested_time, struct timespec *remaining);
+int kill(__pid_t pid, int sig);
+int getopt(int argc, char *const *argv, const char *shortopts);
+
 #define PARENT_PATH "./hrun_parent"
 #define CONFIG_PATH "./.config"
 #define CONTROLLER_PATH "./hrun_controller"
