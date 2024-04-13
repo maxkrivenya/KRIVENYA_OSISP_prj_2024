@@ -15,6 +15,8 @@ int main(int argc, char* argv[], char* envp[]){
     int flag    = 0;    
     pid_t pid   = 0;
 
+    signal(SIGUSR1, sig1_handler);
+
     char* str = (char*)calloc(256, sizeof(char));
    
     if(str==NULL){
@@ -42,6 +44,7 @@ int main(int argc, char* argv[], char* envp[]){
            perror("file open error\n");
            exit(-1);
        }
+       (void)fprintf(fpids, "%d\n" ,getpid());
        
        FILE* fstat = fopen(".stat","w");
        if(fstat==NULL){
@@ -72,9 +75,9 @@ int main(int argc, char* argv[], char* envp[]){
 
                    case 0:{                            //for forked
                               //name[CHILD_NAME_SIZE-2] = '0' + counter;
-                              //argv[0] = name;
+                              argv[0] = "hrunik";
                               argv[1] = str;
-                              flag = execve(HRUN_CHILD, argv, envp);
+                              flag = execve(HRUN_CHILD, argv, NULL);
                               if(flag == -1){
                                   (void)printf("execve error:%s\n", strerror(errno));
                                   (void)exit(EXIT_FAILURE);

@@ -16,11 +16,17 @@ int nanosleep(const struct timespec *requested_time, struct timespec *remaining)
 int kill(__pid_t pid, int sig);
 int getopt(int argc, char *const *argv, const char *shortopts);
 
+void sig1_handler(int sig){
+    signal(SIGUSR1, sig1_handler);
+    kill(0,SIGINT);
+}
+
 #define PARENT_PATH "./hrun_parent"
 #define CONFIG_PATH "./.config"
 #define CONTROLLER_PATH "./hrun_controller"
 #define HRUN_CHILD "./hrunik"
-#define OPT_MASK "lew"
+#define OPT_MASK "lewk"
+#define ENV_VAR "HRUN"
 #define LINE_SEPARATOR "\n=============================================\n"
 
 #define MAX_LINE_LENGTH 80
