@@ -1,35 +1,10 @@
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <dirent.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <time.h>
-#include <ctype.h>
-#include <errno.h>
-#include <signal.h>
-
-int lstat(const char * file, struct stat * buf);
-int nanosleep(const struct timespec *requested_time, struct timespec *remaining);
-int kill(__pid_t pid, int sig);
-int getopt(int argc, char *const *argv, const char *shortopts);
+#include "definitions.h"
 
 void sig1_handler(int sig){
     signal(SIGUSR1, sig1_handler);
     kill(0,SIGINT);
 }
 
-#define PARENT_PATH "./hrun_parent"
-#define CONFIG_PATH "./.config"
-#define CONTROLLER_PATH "./hrun_controller"
-#define HRUN_CHILD "./hrunik"
-#define OPT_MASK "lewk"
-#define ENV_VAR "HRUN"
-#define LINE_SEPARATOR "\n=============================================\n"
-
-#define MAX_LINE_LENGTH 80
 
 //dd hh mm ss task 
 //01 34 67 9  12->
@@ -59,3 +34,4 @@ char* get_task_from_string(char* string){
     string[i] = '\0';
     return string;
 }
+

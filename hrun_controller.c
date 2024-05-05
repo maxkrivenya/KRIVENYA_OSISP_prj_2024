@@ -1,39 +1,67 @@
 #include "hrun.h"
-#include <stdio.h>
 
 int main(int argc, char* argv[], char* envp[]){
+
     if(argc < 1){
         perror("argc too little\n");
         exit(-1);
     }
+
     int flag = 0;
-    FILE* fptr2 = fopen(".output","a");
-    if(fptr2==NULL){
-        perror("file open error\n");
-        exit(-1);
+    char* timer = NULL;
+
+    time_t rawtime;
+    time ( &rawtime );
+
+    sem_t* log_mutex = sem_open(LOG_MUTEX_NAME , 0);
+       
+    sem_wait(log_mutex);
+    {
+        FILE* logger = fopen(LOG_PATH, "a");
+        if(logger==NULL){
+            strerror(errno);
+            exit(-1);
+        }
+        timer = asctime(localtime(&rawtime));
+        fprintf(logger,"%s\t|\t", LOG_INFO);
+        for(int i = 0; i < TIME_FULL_LENGTH; i++){
+            fprintf(logger, "%c", timer[i]); 
+        }
+        fprintf(logger,"\t|\t%d\t|\t%s%c\n", getpid(), LOG_CONTROLLER_INVOKED, argv[0][0]);
+
+        fclose(logger);
     }
+    sem_post(log_mutex);
 
     switch(argv[0][0]){
         case 'l':{
+                     int   i   = 0;
                      char* str = (char*)calloc(MAX_LINE_LENGTH+1,sizeof(char));
+
                      if(str==NULL){
                          perror("calloc fail\n");
                          exit(-1);
                      }
 
                      FILE* fptr = fopen(CONFIG_PATH,"r");
-                     while(!feof(fptr)){
-                         (void)fgets(str,MAX_LINE_LENGTH , fptr);
-                         if(str==NULL){
-                             (void)printf("fgets error. exiting\n");
-                             free(str);
-                             exit(0);
-                         }
-                         if(!feof(fptr)){
-                             (void)printf("^| %s", str);
+                     {
+                         while(!feof(fptr)){
+                             i++;
+
+                             (void)fgets(str,MAX_LINE_LENGTH , fptr);
+                             if(str==NULL){
+                                 (void)printf("fgets error. exiting\n");
+                                 free(str);
+                                 exit(0);
+                             }
+
+                             if(!feof(fptr)){
+                                 (void)printf("%d| %s", i, str);
+                             }
                          }
                      }
                      flag = fclose(fptr);
+
                      if(flag==EOF){
                          (void)printf("file close error.\n");
                          exit(0);
@@ -45,20 +73,56 @@ int main(int argc, char* argv[], char* envp[]){
                      argv[1] = CONFIG_PATH;
                      argv[2] = NULL;
                      (void)execve(getenv("EDITOR"),argv,envp);
-                     (void)printf("execve failed!\n");
+                     (void)strerror(errno);
                      exit(-1);
                      break;
                  }
         case 'k':{
-                     pid_t root = 0;
-                     FILE* fpids = fopen(".pids","r");
-                     if(fpids==NULL){
-                         perror("file open error\n");
-                         exit(-1);
+                     pid_t root  = 0;
+                     char* line  = (char*)calloc(10,1);
+
+                     sem_t* pids_mutex = sem_open(PIDS_MUTEX_NAME , 0);
+                     sem_t* log_mutex  = sem_open(LOG_MUTEX_NAME , 0);
+
+                     sem_wait(pids_mutex);
+                     {
+                         FILE* fpids = fopen(".pids","r");
+                         {
+                             if(fpids==NULL){
+                                 perror("file open error\n");
+                                 exit(-1);
+                             }
+                             line = fgets(line, 9, fpids);
+                             root = atoi(line);
+                         }
+
+                         sem_wait(log_mutex);
+                         {
+                             FILE* flog = fopen(LOG_PATH, "a");
+                             if(flog == NULL){
+                                 printf("%s\n", strerror(errno));
+                                 exit(-1);
+                             }
+
+                             while(!feof(fpids)){
+                                 (void)fgets(line, MAX_LINE_LENGTH, fpids);
+                                 if(!feof(fpids)){
+                                     fprintf(flog, "%s\t|\t", LOG_KILL);
+                                     timer = asctime(localtime(&rawtime));
+                                     for(int i = 0; i < TIME_FULL_LENGTH; i++){
+                                         fprintf(flog, "%c", timer[i]); 
+                                     }
+                                     fprintf(flog, "\t|\t%d\t|\t%s\n", atoi(line), DEATH_CAUSE_CONTROLLER);
+                                 }
+                             }
+                             fclose(flog);
+                         }
+                         sem_post(log_mutex);
+
+                         fclose(fpids);
                      }
-                     char* line = (char*)calloc(10,1);
-                     line = fgets(line, 9, fpids);
-                     root = atoi(line);
+                     sem_post(pids_mutex);
+
                      signal(SIGUSR1,sig1_handler);
                      kill(root,SIGUSR1);
                      break;
@@ -69,7 +133,6 @@ int main(int argc, char* argv[], char* envp[]){
                      time ( &rawtime );
                      timeinfo = localtime ( &rawtime );
                      fprintf (stdout, "Current local time and date: %s", asctime (timeinfo));
-                     fprintf (fptr2, "Current local time and date: %s", asctime (timeinfo));
                      break;
                  }
         default:{
@@ -77,7 +140,6 @@ int main(int argc, char* argv[], char* envp[]){
                     break;
                 }
     }
-    fclose(fptr2);
     exit(1);
     return 0;
 }
