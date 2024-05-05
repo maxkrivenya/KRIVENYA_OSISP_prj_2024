@@ -174,6 +174,7 @@ int main(int argc, char* argv[], char* envp[]){
                     (void)fgets(str, MAX_LINE_LENGTH, fpids);
                     if(!feof(fpids)){
                         fprintf(flog, "%s\t|\t", LOG_KILL);
+                        time ( &rawtime );
                         current_time = asctime(localtime(&rawtime));
                         for(int i = 0; i < TIME_FULL_LENGTH; i++){
                             fprintf(flog, "%c", current_time[i]); 
