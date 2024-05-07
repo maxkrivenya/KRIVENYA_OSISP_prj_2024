@@ -35,6 +35,7 @@
 #define OPT_MASK        "lewk"
 #define ENV_VAR         "HRUN"
 
+#define TIME_LENGTH 15
 #define LOG_MUTEX_NAME   "HRUN_LOG_MUTEX"
 #define PIDS_MUTEX_NAME  "HRUN_PIDS_MUTEX"
 

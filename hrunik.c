@@ -1,5 +1,4 @@
 #include "hrun.h"
-#include <time.h>
 
 int main(int argc, char* argv[], char* envp[]){
 
@@ -7,7 +6,7 @@ int main(int argc, char* argv[], char* envp[]){
 
     char* task = NULL;
     char* current_time = NULL;
-    char  plan_time[14];
+    char  plan_time[TIME_LENGTH];
     
     int i = 0;
     time_t rawtime;
@@ -25,7 +24,7 @@ int main(int argc, char* argv[], char* envp[]){
         exit(-1);
     }
    
-    for(int j = 0; j < 14; j++){
+    for(int j = 0; j < TIME_LENGTH; j++){
         plan_time[j] = argv[1][j];     //get plan time from data
     }
     
@@ -58,12 +57,18 @@ int main(int argc, char* argv[], char* envp[]){
         timeinfo = localtime ( &rawtime );
         current_time = asctime(timeinfo);
        
-        for(i = 0; i < 12; i++){
-            current_time[i] = current_time[i + 8];  //remove weekday, month, year
+        current_time[4] = ' ';
+        if(current_time[8] == ' '){
+            current_time[8] = '0';
+        }
+
+        for(i = 4; i < TIME_LENGTH; i++){
+            current_time[i + 1] = current_time[i + 5];  //remove weekday, month, year
         }
         current_time[i]='\0';
+
         
-        if(current_time[7]=='1'){                   //REMOVE BEFORE SHIPPING
+        if(current_time[11]=='1'){                   //REMOVE BEFORE SHIPPING
             exit(1);
         }
 
