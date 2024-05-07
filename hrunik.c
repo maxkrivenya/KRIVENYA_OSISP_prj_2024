@@ -67,7 +67,7 @@ int main(int argc, char* argv[], char* envp[]){
         }
         current_time[i]='\0';
 
-        
+
         if(current_time[11]=='1'){                   //REMOVE BEFORE SHIPPING
             exit(1);
         }
@@ -94,6 +94,7 @@ int main(int argc, char* argv[], char* envp[]){
                 fclose(logger);
             }
             sem_post(log_mutex);
+
         }
         nanosleep(&nan,&nan2);
     }

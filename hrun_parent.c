@@ -1,6 +1,4 @@
 #include "hrun.h"
-#include <semaphore.h>
-#include <stdio.h>
 
 int main(int argc, char* argv[], char* envp[]){
     
@@ -146,6 +144,27 @@ int main(int argc, char* argv[], char* envp[]){
             if(last_change_date != entstat.st_mtime){
                 break;
             }
+
+            time ( &rawtime );
+            timeinfo = localtime ( &rawtime );
+            current_time = asctime(timeinfo);
+            if(
+                    (
+                    //current_time[11]==
+                    //current_time[12]==
+                    //current_time[14]==
+                    //current_time[15]==
+                    current_time[17]==
+                    current_time[18]
+                    )
+                    &&
+                    current_time[18]=='0'
+            ){
+                sem_wait(log_mutex);
+                system("sh ./.sysconfig");
+                sem_post(log_mutex);
+            }
+
             (void)nanosleep(&nan1,&nan2);
 
         } //while 1
