@@ -4,6 +4,17 @@ int main(int argc, char* argv[], char* envp[]){
 
     if(argc<0){return -1;}
 
+    if(argv[1][0]=='i' && argv[1][1] == 'n'){
+        if(task_in(argv[1])){
+            printf("task_in failed\n");
+            exit(-1);
+        }
+        else{
+           printf("task_in success\n"); 
+           exit(1);
+        }
+    }
+
     char* task = NULL;
     char* current_time = NULL;
     char  plan_time[TIME_LENGTH];
@@ -25,7 +36,7 @@ int main(int argc, char* argv[], char* envp[]){
     }
    
     for(int j = 0; j < TIME_LENGTH; j++){
-        plan_time[j] = argv[1][j];     //get plan time from data
+        plan_time[j] = argv[1][j + TYPE_LENGTH + 1];     //get plan time from data
     }
     
     task = get_task_from_string(argv[1]);
@@ -68,11 +79,11 @@ int main(int argc, char* argv[], char* envp[]){
         current_time[i]='\0';
 
 
-        if(current_time[11]=='1'){                   //REMOVE BEFORE SHIPPING
+        if(current_time[11]=='0'){                   //REMOVE BEFORE SHIPPING
             exit(1);
         }
 
-        if(time_to_proc(plan_time, current_time)){  //check if time to do stuff
+        if(time_to_proc(plan_time, current_time) == 1){  //check if time to do stuff
             system(task);
 
             sem_wait(log_mutex);
