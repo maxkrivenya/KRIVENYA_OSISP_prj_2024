@@ -154,20 +154,19 @@ int main(int argc, char* argv[], char* envp[]){
             current_time = asctime(timeinfo);
             if(
                     (
-                     //current_time[11]==
-                     //current_time[12]==
-                     //current_time[14]==
-                     //current_time[15]==
-                     current_time[17]==
-                     current_time[18]
+                     current_time[11]== '0' &&
+                     current_time[12]== '0' &&
+                     current_time[14]== '0' &&
+                     current_time[15]== '0' &&
+                     current_time[17]== '0' &&
+                     current_time[18]== '0'
                     )
-                    &&
-                    current_time[18]=='0'
               ){
 
                 sem_wait(log_mutex);
 
                 system("sh ./.sysconfig");
+
                 flog = fopen(LOG_PATH, "w");
                 if(flog==NULL){
                     printf("%s\n",strerror(errno));

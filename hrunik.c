@@ -18,7 +18,12 @@ int main(int argc, char* argv[], char* envp[]){
     char* task = NULL;
     char* current_time = NULL;
     char  plan_time[TIME_LENGTH];
-    
+    char  type[3];
+    type[0] = argv[1][0];
+    type[1] = argv[1][1];
+    type[2] = '\0';
+    printf("type:%s\n", type);
+
     int i = 0;
     time_t rawtime;
     struct tm * timeinfo;
@@ -97,15 +102,22 @@ int main(int argc, char* argv[], char* envp[]){
                 current_time = asctime(timeinfo);
 
                 fprintf(logger, "%s\t|\t", LOG_EXEC);
-                for(int i = 0; i < TIME_FULL_LENGTH; i++){
-                    fprintf(logger, "%c", current_time[i]);
-                } 
+                for(int i = 0; i < TIME_FULL_LENGTH; i++){ fprintf(logger, "%c", current_time[i]); } 
                 fprintf(logger, "\t|\t%d\t|\t%s", getpid(), task);
 
+                if(type[0] == 'a' && type[1] == 't'){
+                    fprintf(logger, "%s\t|\t", LOG_KILL);
+                    for(int i = 0; i < TIME_FULL_LENGTH; i++){ fprintf(logger, "%c", current_time[i]); } 
+                    fprintf(logger, "\t|\t%d\t|\t%s\n", getpid(), DEATH_CAUSE_ONCE);
+                }
                 fclose(logger);
             }
             sem_post(log_mutex);
 
+
+                if(type[0] == 'a' && type[1] == 't'){
+                    exit(1);
+                }
         }
         nanosleep(&nan,&nan2);
     }
