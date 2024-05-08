@@ -40,8 +40,9 @@
 #define LOG_MUTEX_NAME   "HRUN_LOG_MUTEX"
 #define PIDS_MUTEX_NAME  "HRUN_PIDS_MUTEX"
 
-#define OPT_MASK        "lewk"
+#define OPT_MASK        "lewka"
 #define ENV_VAR         "HRUN"
+#define EXAMPLE_TASK    "at Sat dd hh mm ss ./hrun -l"
 
 #define MAX_LINE_LENGTH 80
 #define LINE_SEPARATOR "\n==========================================================================\n"

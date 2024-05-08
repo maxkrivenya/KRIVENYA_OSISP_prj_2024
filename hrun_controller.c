@@ -9,6 +9,7 @@ int main(int argc, char* argv[], char* envp[]){
 
     int flag = 0;
     char* timer = NULL;
+    FILE* logger = NULL;
 
     time_t rawtime;
     time ( &rawtime );
@@ -17,7 +18,7 @@ int main(int argc, char* argv[], char* envp[]){
        
     sem_wait(log_mutex);
     {
-        FILE* logger = fopen(LOG_PATH, "a");
+        logger = fopen(LOG_PATH, "a");
         if(logger==NULL){
             strerror(errno);
             exit(-1);
@@ -133,6 +134,18 @@ int main(int argc, char* argv[], char* envp[]){
                      time ( &rawtime );
                      timeinfo = localtime ( &rawtime );
                      fprintf (stdout, "Current local time and date: %s", asctime (timeinfo));
+                     break;
+                 }
+        case 'a':{
+                     char* task = (char*)calloc(MAX_LINE_LENGTH + 1, sizeof(char));
+                     printf("Example:\n %s\n", EXAMPLE_TASK);
+                     printf("New task:\n ");
+                     fgets(task, MAX_LINE_LENGTH, stdin);
+                     //printf("%s\n", task);
+                     logger = fopen(CONFIG_PATH, "a");
+                     fputs(task, logger); 
+                     fclose(logger);
+                     free(task);
                      break;
                  }
         default:{

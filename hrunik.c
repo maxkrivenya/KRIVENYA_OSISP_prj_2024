@@ -22,7 +22,6 @@ int main(int argc, char* argv[], char* envp[]){
     type[0] = argv[1][0];
     type[1] = argv[1][1];
     type[2] = '\0';
-    printf("type:%s\n", type);
 
     int i = 0;
     time_t rawtime;
