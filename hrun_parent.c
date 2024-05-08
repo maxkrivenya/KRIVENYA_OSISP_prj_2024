@@ -1,18 +1,19 @@
 #include "hrun.h"
+#include <string.h>
 
 int main(int argc, char* argv[], char* envp[]){
-    
+
 
     if(argc < 1){return -1;}
-    
+
     //.config change check
     time_t last_change_date;
     struct stat entstat;	
-    
+
     //nanosleep
     struct timespec nan1 = {1, 0};
     struct timespec nan2 = {1, 0};
-    
+
     time_t      rawtime;
     struct tm * timeinfo;
     char*       current_time;
@@ -136,6 +137,8 @@ int main(int argc, char* argv[], char* envp[]){
         fclose(fptr);
 
         while(1){
+
+            /*-------------CONFIG STAT------------*/
             flag=lstat(CONFIG_PATH,&entstat);			//get entry type
             if(flag==-1){
                 (void)perror("lstat failed\n");
@@ -145,23 +148,44 @@ int main(int argc, char* argv[], char* envp[]){
                 break;
             }
 
+            /*----------------LOGGING-------------*/
+
             time ( &rawtime );
             timeinfo = localtime ( &rawtime );
             current_time = asctime(timeinfo);
             if(
                     (
-                    //current_time[11]==
-                    //current_time[12]==
-                    //current_time[14]==
-                    //current_time[15]==
-                    current_time[17]==
-                    current_time[18]
+                     //current_time[11]==
+                     //current_time[12]==
+                     //current_time[14]==
+                     //current_time[15]==
+                     current_time[17]==
+                     current_time[18]
                     )
                     &&
                     current_time[18]=='0'
-            ){
+              ){
+
                 sem_wait(log_mutex);
+
                 system("sh ./.sysconfig");
+                flog = fopen(LOG_PATH, "w");
+                if(flog==NULL){
+                    printf("%s\n",strerror(errno));
+                    exit(-1);
+                }
+
+                time ( &rawtime );
+                timeinfo = localtime ( &rawtime );
+                current_time = asctime(timeinfo);
+
+                fprintf(flog, "\n%s%s%s%s%s", LINE_SEPARATOR, current_time, LOG_SEPARATOR, HEADER, LOG_SEPARATOR);
+                flag = fclose(flog);
+                if(flag==EOF){
+                    printf("%s\n",strerror(errno));
+                    exit(-1);
+                }
+
                 sem_post(log_mutex);
             }
 
