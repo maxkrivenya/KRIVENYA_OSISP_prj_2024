@@ -2,7 +2,6 @@
 
 int main(int argc, char* argv[], char* envp[]){
 
-
     if(argc < 1){return -1;}
 
     //.config change check
@@ -17,9 +16,24 @@ int main(int argc, char* argv[], char* envp[]){
     struct tm * timeinfo;
     char*       current_time;
 
+    int logging = envp[0][8] - '0';
+    int zipping = envp[4][8] - '0';
+    int i = 0;
+
+    //getting ziptime
+    for(i = 8; envp[3][i] != '\0'; i++){
+        envp[3][i-8] = envp[3][i]; 
+    }
+    envp[3][i-8] = '\0';
+
+    
+    char buffer[MAX_LINE_LENGTH];
+
+
     sem_unlink(LOG_MUTEX_NAME);
     sem_unlink(PIDS_MUTEX_NAME);
-    sem_t* log_mutex    = sem_open(LOG_MUTEX_NAME , O_CREAT, 0666, 1);
+
+    sem_t* log_mutex    = sem_open(LOG_MUTEX_NAME ,  O_CREAT, 0666, 1);
     sem_t* pids_mutex   = sem_open(PIDS_MUTEX_NAME , O_CREAT, 0666, 1);
 
     int   flag  = 0;    
@@ -28,10 +42,10 @@ int main(int argc, char* argv[], char* envp[]){
     FILE* fpids = NULL;
     FILE* flog  = NULL;
 
+    //killing proccesses
     signal(SIGUSR1, sig1_handler);
 
-    char* str = (char*)calloc(256, sizeof(char));
-
+    char*  str      = (char*) calloc(256,           sizeof(char));
     if(str==NULL){
         perror("calloc\n");
         exit(-1);
@@ -48,32 +62,31 @@ int main(int argc, char* argv[], char* envp[]){
     while(1){
         FILE* fptr = fopen(".config","r");
         if(fptr==NULL){
-            printf("fcuk you%s\n",strerror(errno));
             perror("file open error\n");
             exit(-1);
         }
+        if(logging){
+            sem_wait(log_mutex);
+            {
+                flog = fopen(".log","a");
+                if(flog==NULL){
+                    printf("%s\n",strerror(errno));
+                    exit(-1);
+                }
 
-        sem_wait(log_mutex);
-        {
-            flog = fopen(".log","a");
-            if(flog==NULL){
-                printf("%s\n",strerror(errno));
-                exit(-1);
+                time ( &rawtime );
+                timeinfo = localtime ( &rawtime );
+                current_time = asctime(timeinfo);
+
+                fprintf(flog, "\n%s%s%s%s%s", LINE_SEPARATOR, current_time, LOG_SEPARATOR, HEADER, LOG_SEPARATOR);
+                flag = fclose(flog);
+                if(flag==EOF){
+                    printf("%s\n",strerror(errno));
+                    exit(-1);
+                }
             }
-
-            time ( &rawtime );
-            timeinfo = localtime ( &rawtime );
-            current_time = asctime(timeinfo);
-
-            fprintf(flog, "\n%s%s%s%s%s", LINE_SEPARATOR, current_time, LOG_SEPARATOR, HEADER, LOG_SEPARATOR);
-            flag = fclose(flog);
-            if(flag==EOF){
-                printf("%s\n",strerror(errno));
-                exit(-1);
-            }
+            sem_post(log_mutex);
         }
-        sem_post(log_mutex);
-
         sem_wait(pids_mutex);
         {
             fpids = fopen(".pids","w");
@@ -107,7 +120,7 @@ int main(int argc, char* argv[], char* envp[]){
                                                             //name[CHILD_NAME_SIZE-2] = '0' + counter;
                                    argv[0] = "hrunik";
                                    argv[1] = str;
-                                   flag = execve(HRUN_CHILD, argv, NULL);
+                                   flag = execve(HRUN_CHILD, argv, envp);
                                    if(flag == -1){
                                        (void)printf("execve error:%s\n", strerror(errno));
                                        (void)exit(EXIT_FAILURE);
@@ -148,43 +161,50 @@ int main(int argc, char* argv[], char* envp[]){
             }
 
             /*----------------LOGGING-------------*/
+            if(logging){
+                if(zipping){
+                    time ( &rawtime );
+                    timeinfo = localtime ( &rawtime );
+                    current_time = asctime(timeinfo);
+                    if(time_to_proc(envp[3], time_format(current_time))){
 
-            time ( &rawtime );
-            timeinfo = localtime ( &rawtime );
-            current_time = asctime(timeinfo);
-            if(
-                    (
-                     current_time[11]== '0' &&
-                     current_time[12]== '0' &&
-                     current_time[14]== '0' &&
-                     current_time[15]== '0' &&
-                     current_time[17]== '0' &&
-                     current_time[18]== '0'
-                    )
-              ){
+                        sem_wait(log_mutex);
 
-                sem_wait(log_mutex);
+                        //system("sh ./.logging");
+                        sprintf(buffer, "sh ./.logging.sh ");
+                        printf("%s\t%s\n", envp[1], envp[2]);
+                        for(int i = 17; envp[1][i] != '\0'; i++){
+                            buffer[i] = envp[1][i-17];
+                        }
+                        buffer[i] = ' ';
+                        i++;
+                        int shift = i;
+                        for(; envp[2][i - shift] != '\0'; i++){
+                            buffer[i] = envp[2][i-shift];
+                        }
 
-                system("sh ./.sysconfig");
+                        printf("buffer: %s\n", buffer);
+                        system(buffer);
 
-                flog = fopen(LOG_PATH, "w");
-                if(flog==NULL){
-                    printf("%s\n",strerror(errno));
-                    exit(-1);
+                        flog = fopen(LOG_PATH, "w");
+                        if(flog==NULL){
+                            printf("%s\n",strerror(errno));
+                            exit(-1);
+                        }
+
+                        time ( &rawtime );
+                        timeinfo = localtime ( &rawtime );
+                        current_time = asctime(timeinfo);
+
+                        fprintf(flog, "\n%s%s%s%s%s", LINE_SEPARATOR, current_time, LOG_SEPARATOR, HEADER, LOG_SEPARATOR);
+                        flag = fclose(flog);
+                        if(flag==EOF){
+                            printf("%s\n",strerror(errno));
+                            exit(-1);
+                        }
+                        sem_post(log_mutex);
+                    }
                 }
-
-                time ( &rawtime );
-                timeinfo = localtime ( &rawtime );
-                current_time = asctime(timeinfo);
-
-                fprintf(flog, "\n%s%s%s%s%s", LINE_SEPARATOR, current_time, LOG_SEPARATOR, HEADER, LOG_SEPARATOR);
-                flag = fclose(flog);
-                if(flag==EOF){
-                    printf("%s\n",strerror(errno));
-                    exit(-1);
-                }
-
-                sem_post(log_mutex);
             }
 
             (void)nanosleep(&nan1,&nan2);
@@ -200,38 +220,38 @@ int main(int argc, char* argv[], char* envp[]){
                 printf("%s\n",strerror(errno));
                 exit(-1);
             }
+            if(logging){
+                sem_wait(log_mutex);
+                {
+                    flog = fopen(LOG_PATH, "a");
+                    if(flog == NULL){
+                        printf("couldnt open log:%s\n", strerror(errno));
+                        exit(-1);
+                    }
 
-            sem_wait(log_mutex);
-            {
-                flog = fopen(LOG_PATH, "a");
-                if(flog == NULL){
-                    printf("couldnt open log:%s\n", strerror(errno));
-                    exit(-1);
-                }
-
-                (void)fgets(str, MAX_LINE_LENGTH, fpids);
-
-                while(!feof(fpids)){
                     (void)fgets(str, MAX_LINE_LENGTH, fpids);
-                    if(!feof(fpids)){
-                        fprintf(flog, "%s\t|\t", LOG_KILL);
-                        time ( &rawtime );
-                        current_time = asctime(localtime(&rawtime));
-                        for(int i = 0; i < TIME_FULL_LENGTH; i++){
-                            fprintf(flog, "%c", current_time[i]); 
+
+                    while(!feof(fpids)){
+                        (void)fgets(str, MAX_LINE_LENGTH, fpids);
+                        if(!feof(fpids)){
+                            fprintf(flog, "%s\t|\t", LOG_KILL);
+                            time ( &rawtime );
+                            current_time = asctime(localtime(&rawtime));
+                            for(int i = 0; i < TIME_FULL_LENGTH; i++){
+                                fprintf(flog, "%c", current_time[i]); 
+                            }
+                            fprintf(flog, "\t|\t%d\t|\t%s\n", atoi(str), DEATH_CAUSE_PARENT);
                         }
-                        fprintf(flog, "\t|\t%d\t|\t%s\n", atoi(str), DEATH_CAUSE_PARENT);
+                    }
+
+                    flag = fclose(flog);
+                    if(flag==EOF){
+                        (void)printf("file close error.\n");
+                        exit(-1);
                     }
                 }
-
-                flag = fclose(flog);
-                if(flag==EOF){
-                    (void)printf("file close error.\n");
-                    exit(-1);
-                }
+                sem_post(log_mutex);
             }
-            sem_post(log_mutex);
-
             flag = fclose(fpids);
             if(flag==EOF){
                 (void)printf("file close error.\n");

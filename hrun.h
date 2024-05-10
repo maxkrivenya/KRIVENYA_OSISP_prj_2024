@@ -5,13 +5,32 @@ void sig1_handler(int sig){
     kill(0,SIGINT);
 }
 
+char* time_format(char* full_time){
+   if(full_time == NULL){return NULL;} 
 
-//dd hh mm ss task 
-//01 34 67 9  12->
+    int i = 0;
+    full_time[4] = ' ';
+    
+    if(full_time[8] == ' '){
+        full_time[8] = '0';
+    }
+
+
+    for(i = 4; i < TIME_FULL_LENGTH - 5; i++){
+        full_time[i + 1] = full_time[i + 5];  //remove weekday, month, year
+        full_time[i + 5] = '\0';
+    }
+    full_time[i]='\0';
+    return full_time;
+}
+
 int time_to_proc(char* plan, char* now){
     if(plan==NULL){return -1;}
     if(now==NULL){return -1;}
-    for(int i = 0; i < TIME_LENGTH; i++){
+
+    int i = 0;
+
+    for(i = 0; i < TIME_LENGTH; i++){
         if(isdigit(plan[i])){
             if(plan[i]!=now[i]){
                 return 0;
@@ -41,28 +60,28 @@ char* get_task_from_string(char* string){
 int task_in(char* whole_ass_string){
 
     if((
-            isdigit(whole_ass_string[7]) ||
-            isdigit(whole_ass_string[8]) ||
-            isdigit(whole_ass_string[10]) ||
-            isdigit(whole_ass_string[11]) ||
-            isdigit(whole_ass_string[13]) ||
-            isdigit(whole_ass_string[14]) ||
-            isdigit(whole_ass_string[16]) ||
-            isdigit(whole_ass_string[17])
-      ) == 0){
-            return -1;
+                isdigit(whole_ass_string[7]) ||
+                isdigit(whole_ass_string[8]) ||
+                isdigit(whole_ass_string[10]) ||
+                isdigit(whole_ass_string[11]) ||
+                isdigit(whole_ass_string[13]) ||
+                isdigit(whole_ass_string[14]) ||
+                isdigit(whole_ass_string[16]) ||
+                isdigit(whole_ass_string[17])
+       ) == 0){
+        return -1;
     }
 
     long timer = (
-        (whole_ass_string[17] - '0') +
-        (whole_ass_string[16] - '0') +
-        (60*(whole_ass_string[14] - '0')) +
-        (60*(whole_ass_string[13] - '0')) +
-        (3600*(whole_ass_string[11] - '0')) +
-        (3600*(whole_ass_string[10] - '0')) +
-        (86400*(whole_ass_string[8] - '0')) +
-        (86400*(whole_ass_string[7] - '0')) 
-    );
+            (whole_ass_string[17] - '0') +
+            (whole_ass_string[16] - '0') +
+            (60*(whole_ass_string[14] - '0')) +
+            (60*(whole_ass_string[13] - '0')) +
+            (3600*(whole_ass_string[11] - '0')) +
+            (3600*(whole_ass_string[10] - '0')) +
+            (86400*(whole_ass_string[8] - '0')) +
+            (86400*(whole_ass_string[7] - '0')) 
+            );
 
     int len = strlen(whole_ass_string);
 

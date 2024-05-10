@@ -7,6 +7,7 @@ int main(int argc, char* argv[], char* envp[]){
         exit(-1);
     }
 
+    int logging = envp[0][8] - '0';
     int flag = 0;
     char* timer = NULL;
     FILE* logger = NULL;
@@ -16,23 +17,25 @@ int main(int argc, char* argv[], char* envp[]){
 
     sem_t* log_mutex = sem_open(LOG_MUTEX_NAME , 0);
        
-    sem_wait(log_mutex);
-    {
-        logger = fopen(LOG_PATH, "a");
-        if(logger==NULL){
-            strerror(errno);
-            exit(-1);
-        }
-        timer = asctime(localtime(&rawtime));
-        fprintf(logger,"%s\t|\t", LOG_INFO);
-        for(int i = 0; i < TIME_FULL_LENGTH; i++){
-            fprintf(logger, "%c", timer[i]); 
-        }
-        fprintf(logger,"\t|\t%d\t|\t%s%c\n", getpid(), LOG_CONTROLLER_INVOKED, argv[0][0]);
+    if(logging){
+        sem_wait(log_mutex);
+        {
+            logger = fopen(LOG_PATH, "a");
+            if(logger==NULL){
+                strerror(errno);
+                exit(-1);
+            }
+            timer = asctime(localtime(&rawtime));
+            fprintf(logger,"%s\t|\t", LOG_INFO);
+            for(int i = 0; i < TIME_FULL_LENGTH; i++){
+                fprintf(logger, "%c", timer[i]); 
+            }
+            fprintf(logger,"\t|\t%d\t|\t%s%c\n", getpid(), LOG_CONTROLLER_INVOKED, argv[0][0]);
 
-        fclose(logger);
+            fclose(logger);
+        }
+        sem_post(log_mutex);
     }
-    sem_post(log_mutex);
 
     switch(argv[0][0]){
         case 'l':{
@@ -97,29 +100,30 @@ int main(int argc, char* argv[], char* envp[]){
                              root = atoi(line);
                          }
 
-                         sem_wait(log_mutex);
-                         {
-                             FILE* flog = fopen(LOG_PATH, "a");
-                             if(flog == NULL){
-                                 printf("%s\n", strerror(errno));
-                                 exit(-1);
-                             }
-
-                             while(!feof(fpids)){
-                                 (void)fgets(line, MAX_LINE_LENGTH, fpids);
-                                 if(!feof(fpids)){
-                                     fprintf(flog, "%s\t|\t", LOG_KILL);
-                                     timer = asctime(localtime(&rawtime));
-                                     for(int i = 0; i < TIME_FULL_LENGTH; i++){
-                                         fprintf(flog, "%c", timer[i]); 
-                                     }
-                                     fprintf(flog, "\t|\t%d\t|\t%s\n", atoi(line), DEATH_CAUSE_CONTROLLER);
+                         if(logging){
+                             sem_wait(log_mutex);
+                             {
+                                 FILE* flog = fopen(LOG_PATH, "a");
+                                 if(flog == NULL){
+                                     printf("%s\n", strerror(errno));
+                                     exit(-1);
                                  }
-                             }
-                             fclose(flog);
+
+                                 while(!feof(fpids)){
+                                     (void)fgets(line, MAX_LINE_LENGTH, fpids);
+                                     if(!feof(fpids)){
+                                         fprintf(flog, "%s\t|\t", LOG_KILL);
+                                         timer = asctime(localtime(&rawtime));
+                                         for(int i = 0; i < TIME_FULL_LENGTH; i++){
+                                             fprintf(flog, "%c", timer[i]); 
+                                         }
+                                         fprintf(flog, "\t|\t%d\t|\t%s\n", atoi(line), DEATH_CAUSE_CONTROLLER);
+                                     }
+                                 }
+                                 fclose(flog);
                          }
                          sem_post(log_mutex);
-
+                        }
                          fclose(fpids);
                      }
                      sem_post(pids_mutex);
@@ -141,7 +145,6 @@ int main(int argc, char* argv[], char* envp[]){
                      printf("Example:\n %s\n", EXAMPLE_TASK);
                      printf("New task:\n ");
                      fgets(task, MAX_LINE_LENGTH, stdin);
-                     //printf("%s\n", task);
                      logger = fopen(CONFIG_PATH, "a");
                      fputs(task, logger); 
                      fclose(logger);

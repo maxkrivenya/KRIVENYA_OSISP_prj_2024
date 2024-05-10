@@ -4,6 +4,8 @@ int main(int argc, char* argv[], char* envp[]){
 
     if(argc<0){return -1;}
 
+    int logging = envp[0][8] - '0';
+
     if(argv[1][0]=='i' && argv[1][1] == 'n'){
         if(task_in(argv[1])){
             printf("task_in failed\n");
@@ -45,6 +47,7 @@ int main(int argc, char* argv[], char* envp[]){
     
     task = get_task_from_string(argv[1]);
 
+    if(logging){
     sem_wait(log_mutex);
     {
         time ( &rawtime );
@@ -66,57 +69,47 @@ int main(int argc, char* argv[], char* envp[]){
         fclose(logger);
     }
     sem_post(log_mutex);
-    
+    }
     while(1){
         time ( &rawtime );
         timeinfo = localtime ( &rawtime );
         current_time = asctime(timeinfo);
        
-        current_time[4] = ' ';
-        if(current_time[8] == ' '){
-            current_time[8] = '0';
-        }
-
-        for(i = 4; i < TIME_LENGTH; i++){
-            current_time[i + 1] = current_time[i + 5];  //remove weekday, month, year
-        }
-        current_time[i]='\0';
-
-
         if(current_time[11]=='0'){                   //REMOVE BEFORE SHIPPING
             exit(1);
         }
 
-        if(time_to_proc(plan_time, current_time) == 1){  //check if time to do stuff
+        if(time_to_proc(plan_time, time_format(current_time)) == 1){  //check if time to do stuff
             system(task);
 
-            sem_wait(log_mutex);
-            {
-                logger = fopen(LOG_PATH, "a");
-                if(logger==NULL){
-                    strerror(errno);
-                    exit(-1);
-                }
+            if(logging){
+                sem_wait(log_mutex);
+                {
+                    logger = fopen(LOG_PATH, "a");
+                    if(logger==NULL){
+                        strerror(errno);
+                        exit(-1);
+                    }
 
-                current_time = asctime(timeinfo);
+                    current_time = asctime(timeinfo);
 
-                fprintf(logger, "%s\t|\t", LOG_EXEC);
-                for(int i = 0; i < TIME_FULL_LENGTH; i++){ fprintf(logger, "%c", current_time[i]); } 
-                fprintf(logger, "\t|\t%d\t|\t%s", getpid(), task);
-
-                if(type[0] == 'a' && type[1] == 't'){
-                    fprintf(logger, "%s\t|\t", LOG_KILL);
+                    fprintf(logger, "%s\t|\t", LOG_EXEC);
                     for(int i = 0; i < TIME_FULL_LENGTH; i++){ fprintf(logger, "%c", current_time[i]); } 
-                    fprintf(logger, "\t|\t%d\t|\t%s\n", getpid(), DEATH_CAUSE_ONCE);
+                    fprintf(logger, "\t|\t%d\t|\t%s", getpid(), task);
+
+                    if(type[0] == 'a' && type[1] == 't'){
+                        fprintf(logger, "%s\t|\t", LOG_KILL);
+                        for(int i = 0; i < TIME_FULL_LENGTH; i++){ fprintf(logger, "%c", current_time[i]); } 
+                        fprintf(logger, "\t|\t%d\t|\t%s\n", getpid(), DEATH_CAUSE_ONCE);
+                    }
+                    fclose(logger);
                 }
-                fclose(logger);
+                sem_post(log_mutex);
             }
-            sem_post(log_mutex);
 
-
-                if(type[0] == 'a' && type[1] == 't'){
-                    exit(1);
-                }
+            if(type[0] == 'a' && type[1] == 't'){
+                exit(1);
+            }
         }
         nanosleep(&nan,&nan2);
     }
