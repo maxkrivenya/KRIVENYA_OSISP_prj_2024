@@ -170,7 +170,6 @@ int main(int argc, char* argv[], char* envp[]){
 
                         sem_wait(log_mutex);
 
-                        //system("sh ./.logging");
                         sprintf(buffer, "sh ./.logging.sh ");
                         printf("%s\t%s\n", envp[1], envp[2]);
                         for(int i = 17; envp[1][i] != '\0'; i++){

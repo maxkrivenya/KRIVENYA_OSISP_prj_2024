@@ -18,7 +18,7 @@
 #define TYPE_LENGTH 2
 #define TIME_LENGTH 15
 #define TIME_FULL_LENGTH 24
-#define TASK_PREFIX (TYPE_LENGTH + 1 + TIME_LENGTH)
+#define TASK_PREFIX (TYPE_LENGTH + 1 + TIME_LENGTH + 1)
 
 #define LOG_ASGN         "[ASGN]:"
 #define LOG_EXEC         "[EXEC]:"

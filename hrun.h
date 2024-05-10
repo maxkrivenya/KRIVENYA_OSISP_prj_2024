@@ -83,10 +83,9 @@ int task_in(char* whole_ass_string){
             (86400*(whole_ass_string[7] - '0')) 
             );
 
-    int len = strlen(whole_ass_string);
-
     whole_ass_string = get_task_from_string(whole_ass_string);
 
+    printf("%ld:%s\n", timer, whole_ass_string);
     sleep(timer); 
 
     system(whole_ass_string);

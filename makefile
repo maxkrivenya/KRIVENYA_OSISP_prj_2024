@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS= -W -Wall -Wextra -std=c11
+CFLAGS= -W -Wextra -std=c11
 .PHONY: clean
 
 all: hrun hrun_controller hrun_parent hrunik

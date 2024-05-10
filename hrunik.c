@@ -8,11 +8,9 @@ int main(int argc, char* argv[], char* envp[]){
 
     if(argv[1][0]=='i' && argv[1][1] == 'n'){
         if(task_in(argv[1])){
-            printf("task_in failed\n");
             exit(-1);
         }
         else{
-           printf("task_in success\n"); 
            exit(1);
         }
     }
@@ -25,7 +23,6 @@ int main(int argc, char* argv[], char* envp[]){
     type[1] = argv[1][1];
     type[2] = '\0';
 
-    int i = 0;
     time_t rawtime;
     struct tm * timeinfo;
     
@@ -75,10 +72,6 @@ int main(int argc, char* argv[], char* envp[]){
         timeinfo = localtime ( &rawtime );
         current_time = asctime(timeinfo);
        
-        if(current_time[11]=='0'){                   //REMOVE BEFORE SHIPPING
-            exit(1);
-        }
-
         if(time_to_proc(plan_time, time_format(current_time)) == 1){  //check if time to do stuff
             system(task);
 
