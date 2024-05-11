@@ -151,6 +151,15 @@ int main(int argc, char* argv[], char* envp[]){
                      free(task);
                      break;
                  }
+        case 's':{
+                     argv[1] = SYSCONF_PATH;
+                     argv[2] = NULL;
+                     (void)execve(getenv("EDITOR"),argv,envp);
+                     (void)strerror(errno);
+                     exit(-1);
+                     break;
+                    
+                 }
         default:{
                     printf("idk\n");
                     break;

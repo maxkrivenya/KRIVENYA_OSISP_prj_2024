@@ -41,7 +41,7 @@ int main(int argc, char* argv[], char* envp[]){
 
 	if(opt != -1){ //call controller 
         argv[0][0] = opt;
-        (void)execve(CONTROLLER_PATH, argv, sysconf);
+        (void)execve(CONTROLLER_PATH, argv, envp);
         (void)strerror(errno);
         exit(-1);
     }else{          //call planner

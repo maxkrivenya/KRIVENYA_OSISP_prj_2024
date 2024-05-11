@@ -1,0 +1,11 @@
+# Ignore everything
+*
+
+# But not these files...
+!*.c
+!*.h
+!makefile
+!readme.md
+!.*
+# ...even if they are in subdirectories
+!*/

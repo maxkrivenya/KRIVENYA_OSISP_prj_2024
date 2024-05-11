@@ -37,7 +37,7 @@
 #define LOG_MUTEX_NAME   "HRUN_LOG_MUTEX"
 #define PIDS_MUTEX_NAME  "HRUN_PIDS_MUTEX"
 
-#define OPT_MASK         "lewka"
+#define OPT_MASK         "lewkas"
 #define ENV_VAR          "HRUN"
 #define EXAMPLE_TASK     "at Sat dd hh mm ss ./hrun -l"
 
