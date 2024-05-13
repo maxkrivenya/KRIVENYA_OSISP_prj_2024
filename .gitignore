@@ -6,7 +6,7 @@
 !*.h
 !makefile
 !readme.md
-!/bin/
+!bin/
 !.*
 .log
 # ...even if they are in subdirectories
