@@ -7,5 +7,6 @@
 !makefile
 !readme.md
 !.*
+.log
 # ...even if they are in subdirectories
 !*/
