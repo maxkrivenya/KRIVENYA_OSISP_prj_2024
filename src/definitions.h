@@ -25,14 +25,14 @@
 #define LOG_KILL         "[KILL]:"
 #define LOG_INFO         "[INFO]:"
 
-#define HRUN_CHILD       "./hrunik"
-#define PARENT_PATH      "./hrun_parent"
-#define CONTROLLER_PATH  "./hrun_controller"
+#define HRUN_CHILD       "./bin/hrunik"
+#define PARENT_PATH      "./bin/hrun_parent"
+#define CONTROLLER_PATH  "./bin/hrun_controller"
 
 #define LOG_PATH         "./.log"
-#define PIDS_PATH        "./.pids"
+#define PIDS_PATH        "./sys/.pids"
 #define CONFIG_PATH      "./.config"
-#define SYSCONF_PATH     "./.sysconfig"
+#define SYSCONF_PATH     "./sys/.sysconfig"
 
 #define LOG_MUTEX_NAME   "HRUN_LOG_MUTEX"
 #define PIDS_MUTEX_NAME  "HRUN_PIDS_MUTEX"
