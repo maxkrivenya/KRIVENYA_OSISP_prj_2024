@@ -171,7 +171,6 @@ int main(int argc, char* argv[], char* envp[]){
                         sem_wait(log_mutex);
 
                         sprintf(buffer, "sh ./.logging.sh ");
-                        printf("%s\t%s\n", envp[1], envp[2]);
                         for(int i = 17; envp[1][i] != '\0'; i++){
                             buffer[i] = envp[1][i-17];
                         }
@@ -182,7 +181,6 @@ int main(int argc, char* argv[], char* envp[]){
                             buffer[i] = envp[2][i-shift];
                         }
 
-                        printf("buffer: %s\n", buffer);
                         system(buffer);
 
                         flog = fopen(LOG_PATH, "w");

@@ -4,7 +4,7 @@ CFLAGS= -W -Wextra -std=c11
 
 all: hrun hrun_controller hrun_parent hrunik
 hrun: ./src/hrun.c makefile
-		$(CC) $(CFLAGS) ./src/hrun.c -o ./bin/hrun
+		$(CC) $(CFLAGS) ./src/hrun.c -o ./hrun
 hrun_controller: ./src/hrun_controller.c makefile
 		$(CC) $(CFLAGS) ./src/hrun_controller.c -o ./bin/hrun_controller
 hrun_parent: ./src/hrun_parent.c makefile

@@ -1,5 +1,5 @@
 LOGGING=1
 LOGDIR=./logs/
 LOGNAME=$(date -d "yesterday" '+%Y-%m-%d')log
-ZIPTIME=***:**:00:00:00
+ZIPTIME=***:**:18:33:00
 ZIPPING=1
