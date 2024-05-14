@@ -5,7 +5,7 @@ hrun - the best task scheduler
 
 ==================================HOW TO RUN===========================
 ```shell
-git clone https://github.com/maxkrivenya/KRIVENYA_OSISP_prj_2024
+git clone https://github.com/maxkrivenya/KRIVENYA_OSISP_prj_2024 hrun
 ```
 ```shell
 make
